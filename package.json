@@ -1,0 +1,15 @@
+{
+  "name" : "servervortex",
+  "version" : "1.0.0",
+  "private" : false,
+  "engines" : {
+    "node": "*",
+    "npm": "*"
+  },
+  "dependencies" : {
+      "express": "*",
+      "socket.io": "*",
+      "vortexjs": "*"	  
+  },
+  "devDependencies": {}
+}

@@ -39,7 +39,7 @@ app.use(allowCrossDomain);
 app.post('/create', function(request, response){
     var conector_http = new NodoServerHTTP({
         id: pad(ultimo_id_sesion_http, 4),
-        verbose:true,
+        //verbose:true,
         app: app,
         alDesconectar: function(){
             sesiones_http.splice(sesiones_http.indexOf(conector_http), 1);
@@ -56,7 +56,7 @@ io.on('connection', function (socket) {
     var conector_socket = new NodoConectorSocket({
         id: ultimo_id_sesion_ws.toString(),
         socket: socket, 
-        verbose: true, 
+        //verbose: true, 
         alDesconectar:function(){
             sesiones_web_socket.splice(sesiones_web_socket.indexOf(conector_socket), 1);
         }

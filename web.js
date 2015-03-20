@@ -4,8 +4,7 @@ var Vortex = require('vortexjs');
 var express = require('express');
 
 var NodoServerHTTP = Vortex.NodoServerHTTP;
-var NodoRouter = Vortex.NodoRouter;
-var NodoConectorSocket = Vortex.NodoConectorSocket;
+var Vx = Vortex.Vx;
 
 var pad = function (n, width, z) {
   z = z || '0';
@@ -14,11 +13,7 @@ var pad = function (n, width, z) {
 }
 
 var sesiones_http = [];
-var sesiones_web_socket = [];
 var ultimo_id_sesion_http = 0;
-var ultimo_id_sesion_ws = 0;
-
-var router = new NodoRouter();
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', "*");
@@ -29,13 +24,11 @@ var allowCrossDomain = function(req, res, next) {
 
 var app = express();
 var server = http.createServer(app);
-var io = require('socket.io')(server, {
-	'transports': ["websocket", "polling"],
-//	"polling duration": 10						  
-});
 
 app.use(allowCrossDomain);
 
+//TODO: Hacer que el NodoServerHTTP sea el que administra los requests y tenga un router 
+//interno conectado al router principal, a ese router se conectan los NodoSesionHTTP (actual NodoServerHTTP)
 app.post('/create', function(request, response){
     var conector_http = new NodoServerHTTP({
         id: pad(ultimo_id_sesion_http, 4),
@@ -47,24 +40,14 @@ app.post('/create', function(request, response){
     });
     ultimo_id_sesion_http+=1;
     sesiones_http.push(conector_http);
-    router.conectarCon(conector_http);     
+    Vx.conectarCon(conector_http);     
     response.send(conector_http.idSesion);
 });
 
-io.on('connection', function (socket) {
-	console.log("nueva conexion socket:");
-    var conector_socket = new NodoConectorSocket({
-        id: ultimo_id_sesion_ws.toString(),
-        socket: socket, 
-        //verbose: true, 
-        alDesconectar:function(){
-            sesiones_web_socket.splice(sesiones_web_socket.indexOf(conector_socket), 1);
-        }
-    });
-    ultimo_id_sesion_ws+=1;
-    sesiones_web_socket.push(conector_socket);
-    router.conectarCon(conector_socket);
-});
+//TODO: Hacer que el NodoServerSocket sea el que administra las conexiones y tenga un router 
+//interno conectado al router principal, a ese router se conectan los NodoSesionSocket, habría que diferenciar los canales con ids, como los http.
+
+var server_web_sockets = new Vortex.ServerWebSockets(server);
 
 app.get('/infoSesiones', function(request, response){
     var info_sesiones = {

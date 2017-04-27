@@ -10,7 +10,7 @@ RouterVortexNode
 
 Router de prueba funcionando en: http://router-vortex.herokuapp.com/
 
-Conectar utilizando los adaptadores en https://github.com/jlurgo/VortexJS
+Conectar utilizando los adaptadores en https://github.com/vortex-rd/vortex-js
 
 Por polling HTTP:
 ```
